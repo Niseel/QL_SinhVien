@@ -1,0 +1,69 @@
+﻿-- Tạo DB
+CREATE DATABASE QL_SinhVien
+GO
+-- Sử dụng DB
+USE QL_SinhVien
+GO
+
+-- Thêm các bảng (quan hệ)
+CREATE TABLE KHOA (
+    MaKhoa NCHAR(8) PRIMARY KEY,
+    TenKhoa NVARCHAR(40) UNIQUE NOT NULL,
+)
+GO
+
+-- Đề bài là 5 nhưng em tham chiếu theo mã môn học của 
+-- SGU nên chuyển thành NCHAR(6)
+CREATE TABLE MONHOC (
+    MaMH NCHAR(6) PRIMARY KEY,
+    TenMH NVARCHAR(40) UNIQUE NOT NULL,
+)
+GO
+
+
+CREATE TABLE LOP (
+    MaLop NCHAR(8) PRIMARY KEY,
+    TenLop NVARCHAR(40) UNIQUE NOT NULL,
+    MaKhoa NCHAR(8) NOT NULL, 
+)
+GO
+
+
+CREATE TABLE SINHVIEN (
+    MaSV NCHAR(8) PRIMARY KEY,
+    Ho NVARCHAR(40) NOT NULL,
+    Ten NVARCHAR(10) NOT NULL, 
+	MaLop NCHAR(8) NOT NULL,
+	Phai BIT CHECK (Phai IN (0, 1)) DEFAULT 1 NOT NULL,
+    NgaySinh DATETIME NOT NULL,
+	NoiSinh NVARCHAR(40),
+	DiaChi NVARCHAR(80)
+)
+GO
+
+CREATE TABLE DIEM (
+    MaSV NCHAR(8),
+    MaMH NCHAR(6),
+    Diem FLOAT CHECK (Diem BETWEEN 0 AND 10)
+	PRIMARY KEY (MaSV, MaMH)
+)
+GO
+
+
+-- Thêm khóa ngoại các bảng
+-- 1
+ALTER TABLE dbo.LOP
+ADD FOREIGN KEY (MaKhoa) REFERENCES dbo.Khoa(MaKhoa);
+GO
+-- 2
+ALTER TABLE dbo.SINHVIEN
+ADD FOREIGN KEY (MaLop) REFERENCES dbo.Lop(MaLop);
+GO
+-- 3
+ALTER TABLE dbo.DIEM
+ADD FOREIGN KEY (MaSV) REFERENCES dbo.SINHVIEN(MaSV);
+GO
+-- 4
+ALTER TABLE dbo.DIEM
+ADD FOREIGN KEY (MaMH) REFERENCES dbo.MonHoc(MaMH);
+GO
